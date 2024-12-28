@@ -5,9 +5,10 @@ import torch
 from torch import nn
 import torch_geometric as tgeom
 # dataset url: https://github.com/divelab/MoleculeX/tree/molx/Molecule3D
-from datasets.datasets_molecule3d_new import Molecule3D
+# from datasets.datasets_molecule3d_new import Molecule3D
 from dmcg_utils.model.gnn import GNN as Decoder_2Dto3D
-from geometric_gnn_dojo_utils.models import MACEModel, EGNNModel
+# from geometric_gnn_dojo_utils.models import MACEModel, EGNNModel
+from geometric_gnn_dojo_utils.models import EGNNModel
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
 from tqdm import tqdm
@@ -128,62 +129,62 @@ class Model(pl.LightningModule):
         return optimizer
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--log_dir', type=str, default='./logs/debug')
-    parser.add_argument('--batch_size', type=int, default=16)
-    parser.add_argument('--epoch_num', type=int, default=20)
-    parser.add_argument('--learning_rate', type=float, default=5e-5) # to be tuned
+# if __name__ == '__main__':
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument('--log_dir', type=str, default='./logs/debug')
+#     parser.add_argument('--batch_size', type=int, default=16)
+#     parser.add_argument('--epoch_num', type=int, default=20)
+#     parser.add_argument('--learning_rate', type=float, default=5e-5) # to be tuned
 
-    parser.add_argument('--decode_len', type=int, default=200)
-    parser.add_argument('--radius_cutoff', type=float, default=5.0)
-    parser.add_argument('--graph_readout', type=str, default="add", choices=["mean", "add"])
-    parser.add_argument('--painn_n_rbf', type=int, default=20)
-    parser.add_argument('--gat_attn_head_num', type=int, default=8)
-    parser.add_argument('--transformer_attn_head_num', type=int, default=8)
+#     parser.add_argument('--decode_len', type=int, default=200)
+#     parser.add_argument('--radius_cutoff', type=float, default=5.0)
+#     parser.add_argument('--graph_readout', type=str, default="add", choices=["mean", "add"])
+#     parser.add_argument('--painn_n_rbf', type=int, default=20)
+#     parser.add_argument('--gat_attn_head_num', type=int, default=8)
+#     parser.add_argument('--transformer_attn_head_num', type=int, default=8)
 
-    # loss weights
-    parser.add_argument('--loss_weight_atom', type=float, default=1)
-    parser.add_argument('--loss_weight_bond', type=float, default=1)
-    parser.add_argument('--loss_weight_coordinate', type=float, default=1)
+#     # loss weights
+#     parser.add_argument('--loss_weight_atom', type=float, default=1)
+#     parser.add_argument('--loss_weight_bond', type=float, default=1)
+#     parser.add_argument('--loss_weight_coordinate', type=float, default=1)
 
-    # continual training
-    parser.add_argument('--load_checkpoint_for_warm_start', type=str, default=None)
-    parser.add_argument('--load_checkpoint_for_continual_training', type=str, default=None)
+#     # continual training
+#     parser.add_argument('--load_checkpoint_for_warm_start', type=str, default=None)
+#     parser.add_argument('--load_checkpoint_for_continual_training', type=str, default=None)
 
-    # number of nodes for parallel training
-    parser.add_argument('--ddp_num_nodes', type=int, default=1)
-    # number of devices in each node for parallel training
-    parser.add_argument('--ddp_device', type=int, default=1)
-    args = parser.parse_args()
+#     # number of nodes for parallel training
+#     parser.add_argument('--ddp_num_nodes', type=int, default=1)
+#     # number of devices in each node for parallel training
+#     parser.add_argument('--ddp_device', type=int, default=1)
+#     args = parser.parse_args()
 
-    # dataset and dataloader
-    dataset_train = Molecule3D(root='../AE_geom_uncond_weights_and_data/', radius_cutoff=args.radius_cutoff, split='train', split_mode='random', args=args)
-    dataloader_train = tgeom.loader.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, num_workers=4)
-    # dataset_val = Molecule3D(root='../data/molecule3d/', radius_cutoff=args.radius_cutoff, split='val', split_mode='random', args=args)
-    # dataloader_val = tgeom.loader.DataLoader(dataset_val, batch_size=args.batch_size, shuffle=False, num_workers=4)
+#     # dataset and dataloader
+#     dataset_train = Molecule3D(root='../AE_geom_uncond_weights_and_data/', radius_cutoff=args.radius_cutoff, split='train', split_mode='random', args=args)
+#     dataloader_train = tgeom.loader.DataLoader(dataset_train, batch_size=args.batch_size, shuffle=True, num_workers=4)
+#     # dataset_val = Molecule3D(root='../data/molecule3d/', radius_cutoff=args.radius_cutoff, split='val', split_mode='random', args=args)
+#     # dataloader_val = tgeom.loader.DataLoader(dataset_val, batch_size=args.batch_size, shuffle=False, num_workers=4)
 
-    # get input dimension
-    args.input_x_dim = dataset_train[0].x.shape[1]
-    args.input_edge_attr_dim = dataset_train[0].edge_attr.shape[1]
+#     # get input dimension
+#     args.input_x_dim = dataset_train[0].x.shape[1]
+#     args.input_edge_attr_dim = dataset_train[0].edge_attr.shape[1]
 
-    # model
-    model = Model(args)
-    if not args.load_checkpoint_for_warm_start is None:
-        model = Model.load_from_checkpoint(args.load_checkpoint_for_warm_start, args=args)
+#     # model
+#     model = Model(args)
+#     if not args.load_checkpoint_for_warm_start is None:
+#         model = Model.load_from_checkpoint(args.load_checkpoint_for_warm_start, args=args)
     
-    # args2 = torch.load('./logs/job2_decoder_2d_to_3d_4layer_new/args.pt')
-    # model = Model.load_from_checkpoint('./logs/job2_decoder_2d_to_3d_4layer_new/checkpoint-best.ckpt', args=args2)
+#     # args2 = torch.load('./logs/job2_decoder_2d_to_3d_4layer_new/args.pt')
+#     # model = Model.load_from_checkpoint('./logs/job2_decoder_2d_to_3d_4layer_new/checkpoint-best.ckpt', args=args2)
 
-    # print args
-    print(args)
-    os.system('mkdir ' + args.log_dir)
-    torch.save(args, args.log_dir + '/args.pt')
+#     # print args
+#     print(args)
+#     os.system('mkdir ' + args.log_dir)
+#     torch.save(args, args.log_dir + '/args.pt')
 
-    # trainer
-    checkpoint_callback = ModelCheckpoint(dirpath=args.log_dir, save_last=True, filename='checkpoint-best', monitor='train_loss')
-    trainer = pl.Trainer(max_epochs=args.epoch_num, gradient_clip_val=5, check_val_every_n_epoch=1, default_root_dir=args.log_dir, callbacks=[checkpoint_callback], num_sanity_val_steps=10,
-                         accelerator='gpu', strategy='ddp', num_nodes=args.ddp_num_nodes, devices=args.ddp_device)
+#     # trainer
+#     checkpoint_callback = ModelCheckpoint(dirpath=args.log_dir, save_last=True, filename='checkpoint-best', monitor='train_loss')
+#     trainer = pl.Trainer(max_epochs=args.epoch_num, gradient_clip_val=5, check_val_every_n_epoch=1, default_root_dir=args.log_dir, callbacks=[checkpoint_callback], num_sanity_val_steps=10,
+#                          accelerator='gpu', strategy='ddp', num_nodes=args.ddp_num_nodes, devices=args.ddp_device)
 
-    trainer.fit(model, dataloader_train, ckpt_path=args.load_checkpoint_for_continual_training)
+#     trainer.fit(model, dataloader_train, ckpt_path=args.load_checkpoint_for_continual_training)
 
