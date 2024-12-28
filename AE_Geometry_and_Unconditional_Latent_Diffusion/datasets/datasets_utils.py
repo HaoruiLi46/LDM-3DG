@@ -20,16 +20,16 @@ allowable_features = {
         Chem.rdchem.ChiralType.CHI_UNSPECIFIED,
         Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CW,
         Chem.rdchem.ChiralType.CHI_TETRAHEDRAL_CCW,
-        Chem.rdchem.ChiralType.CHI_OCTAHEDRAL, # added by YY
-        Chem.rdchem.ChiralType.CHI_SQUAREPLANAR, # added by YY
-        Chem.rdchem.ChiralType.CHI_TRIGONALBIPYRAMIDAL, # added by YY
+        # Chem.rdchem.ChiralType.CHI_OCTAHEDRAL, # added by YY
+        # Chem.rdchem.ChiralType.CHI_SQUAREPLANAR, # added by YY
+        # Chem.rdchem.ChiralType.CHI_TRIGONALBIPYRAMIDAL, # added by YY
         Chem.rdchem.ChiralType.CHI_OTHER,
     ],
     "possible_hybridization_list": [
         Chem.rdchem.HybridizationType.S,
         Chem.rdchem.HybridizationType.SP,
         Chem.rdchem.HybridizationType.SP2,
-        Chem.rdchem.HybridizationType.SP2D,
+        # Chem.rdchem.HybridizationType.SP2D,
         Chem.rdchem.HybridizationType.SP3,
         Chem.rdchem.HybridizationType.SP3D,
         Chem.rdchem.HybridizationType.SP3D2,
